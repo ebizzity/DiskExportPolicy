@@ -1,0 +1,62 @@
+{
+    "mode": "Indexed",
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Compute/disks"
+          },
+          {
+            "field": "location",
+            "equals": "[parameters('location')]"
+          },
+          {
+            "field": "Microsoft.Compute/disks/networkAccessPolicy",
+            "notIn": [
+              "AllowPrivate",
+              "DenyAll"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]",
+        "details": {
+          "roleDefinitionIds": [
+              
+          ],
+          "conflictEffect": "audit",
+          "operations": [
+            {
+              "operation": "addOrReplace",
+              "field": "Microsoft.Compute/disks/networkAccessPolicy",
+              "value": "DenyAll"
+            }
+          ]
+        }
+      }
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "Modify",
+          "Disabled"
+        ],
+        "defaultValue": "Modify"
+      },
+      "location": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Location",
+          "description": "All disks in this region are validated and disk access resource would be associated with them.",
+          "strongType": "location"
+        }
+      }
+    }
+  }
